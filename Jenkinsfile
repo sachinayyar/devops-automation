@@ -1,39 +1,41 @@
-pipeline {
-    agent any
-    tools{
-        maven 'maven_3_5_0'
-    }
-    stages{
-        stage('Build Maven'){
-            steps{
-                checkout([$class: 'GitSCM', branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/Java-Techie-jt/devops-automation']]])
-                sh 'mvn clean install'
-            }
-        }
-        stage('Build docker image'){
-            steps{
-                script{
-                    sh 'docker build -t javatechie/devops-integration .'
-                }
-            }
-        }
-        stage('Push image to Hub'){
-            steps{
-                script{
-                   withCredentials([string(credentialsId: 'dockerhub-pwd', variable: 'dockerhubpwd')]) {
-                   sh 'docker login -u javatechie -p ${dockerhubpwd}'
+#! /usr/bin/env groovy
 
-}
-                   sh 'docker push javatechie/devops-integration'
-                }
-            }
-        }
-        stage('Deploy to k8s'){
-            steps{
-                script{
-                    kubernetesDeploy (configs: 'deploymentservice.yaml',kubeconfigId: 'k8sconfigpwd')
-                }
-            }
-        }
+pipeline {
+
+  agent {
+    label 'maven'
+  }
+
+  stages {
+    stage('Build') {
+      steps {
+        echo 'Building..'
+        
+        sh 'mvn clean package'
+      }
     }
+    stage('Create Container Image') {
+      steps {
+        echo 'Create Container Image..'
+        
+        script {
+
+          openshift.withCluster() { 
+  openshift.withProject("jenkins") {
+  
+    def buildConfigExists = openshift.selector("bc", "codelikethewind").exists() 
+    
+    if(!buildConfigExists){ 
+      openshift.newBuild("--name=codelikethewind", "--docker-image=registry.redhat.io/jboss-eap-7/eap74-openjdk8-openshift-rhel7", "--binary") 
+    } 
+    
+    openshift.selector("bc", "codelikethewind").startBuild("--from-file=target/devops-integration.jar", "--follow") } }
+
+        }
+      }
+    }
+
+
+       
+  }
 }
