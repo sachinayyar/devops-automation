@@ -1,4 +1,3 @@
-appName = "devops-automation"
 pipeline {
     agent any
     environment{
@@ -17,7 +16,8 @@ pipeline {
         }
         stage('image-build') {
             steps {
-                  def builds = openshift.selector("bc", devops-automation).related('builds')
-                }
-                }
+                binaryBuild(buildConfigName: devops-automation, buildFromPath: ".")
+            }
+        }
+}
 }
