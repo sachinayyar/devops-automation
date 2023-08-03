@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         // Set your OpenShift credentials
-        OPENSHIFT_CREDENTIALS = credentials('jenkins-ephemeral-parameters-mgx58')
+        OPENSHIFT_CREDENTIALS = credentials('jenkins-dockercfg-dmqq2')
         OPENSHIFT_PROJECT = 'jenkins'
         OPENSHIFT_APP_NAME = 'devops-automation'
         DOCKER_REGISTRY_CREDENTIALS = credentials('docker-hub')
@@ -16,7 +16,7 @@ pipeline {
             steps {
                 // Assuming you have your source code in a Git repository
                 // Replace the repository URL with your actual repository URL
-                git 'https://github.com/sachinayyar/devops-automation.git'
+                echo "checkout"
             }
         }
 
