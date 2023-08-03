@@ -26,7 +26,7 @@ pipeline {
     def buildConfigExists = openshift.selector("bc", "codelikethewind").exists() 
     
     if(!buildConfigExists){ 
-      openshift.newBuild("--name=codelikethewind", "--docker-image=registry.redhat.io/jboss-eap-7/java", "--binary") 
+      openshift.newBuild("--name=codelikethewind", "--docker-image=quay.io/sachinayyar/jen-pipeline", "--binary") 
     } 
     
     openshift.selector("bc", "codelikethewind").startBuild("--from-file=target/devops-integration.jar", "--follow") } }
