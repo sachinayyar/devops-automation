@@ -17,7 +17,11 @@ pipeline {
         }
         stage('image-build') {
             steps {
-                binaryBuild(buildConfigName: appName, buildFromPath: ".")
+                openshift.withCluster() {
+                openshift.withProject() {
+                  def builds = openshift.selector("bc", devops-automation).related('builds')
+                }
+                }
             }
         }
 }
