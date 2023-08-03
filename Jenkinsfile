@@ -1,3 +1,4 @@
+appName = "devops-automation"
 pipeline {
     agent any
     environment{
