@@ -17,12 +17,8 @@ pipeline {
         }
         stage('image-build') {
             steps {
-                openshift.withCluster() {
-                openshift.withProject() {
                   def builds = openshift.selector("bc", devops-automation).related('builds')
                 }
                 }
-            }
-        }
 }
 }
